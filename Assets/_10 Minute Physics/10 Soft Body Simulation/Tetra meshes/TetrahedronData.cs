@@ -51,8 +51,6 @@ public abstract class TetrahedronData
         get;
     }
 
-
-
     //
     // Data we can get based on the arrays
     //

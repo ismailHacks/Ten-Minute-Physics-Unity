@@ -22,7 +22,7 @@ public class StanfordBunny : TetrahedronData
 		//Convert from double to float
 		verts = new float[vertsDouble.Length];
 
-		for (int i = 0; i < vertsDouble.Length; i++)
+		for (int i = 0; i < verts.Length; i++)
 		{
 			verts[i] = (float)vertsDouble[i];
         }

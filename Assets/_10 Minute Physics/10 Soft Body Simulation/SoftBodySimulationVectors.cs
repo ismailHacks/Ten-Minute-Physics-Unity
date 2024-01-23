@@ -76,8 +76,11 @@ public class SoftBodySimulationVectors : IGrabbable
 		tetEdgeIds = tetraData.GetTetEdgeIds;
 
 		numParticles = tetraData.GetNumberOfVertices;
+
 		numTets = tetraData.GetNumberOfTetrahedrons;
 		numEdges = tetraData.GetNumberOfEdges;
+
+		Debug.Log(numParticles + "-" + numTets+ "-" + numEdges);
 
 		//Init the arrays 
 		//Has to be done in the constructor because readonly
@@ -108,7 +111,6 @@ public class SoftBodySimulationVectors : IGrabbable
 	{
 		//[x0, y0, z0, x1, y1, z1, ...]
 		float[] flatVerts = tetraData.GetVerts;
-
 
 		//Particle position
 		for (int i = 0; i < flatVerts.Length; i += 3)
@@ -508,7 +510,7 @@ public class SoftBodySimulationVectors : IGrabbable
 	private void InitMesh(MeshFilter meshFilter, TetrahedronData tetraData)
 	{
 		Mesh mesh = new();
-
+		Debug.Log(pos[0]);
 		mesh.vertices = pos;
 		mesh.triangles = tetraData.GetTetSurfaceTriIds;
 

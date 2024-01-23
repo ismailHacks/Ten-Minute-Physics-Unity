@@ -17,7 +17,7 @@ public class SoftBodyController : MonoBehaviour
     //Private
     private readonly List<SoftBodySimulationVectors> allSoftBodies = new ();
 
-    private int numberOfBodies = 3;
+    private int numberOfBodies = 1;
 
     private const int SEED = 0;
 
@@ -33,14 +33,16 @@ public class SoftBodyController : MonoBehaviour
     private void Start()
     {
         Random.InitState(SEED);
+        
+        TetrahedronData softBodyMesh = new tetTest();
+        //TetrahedronData softBodyMesh = new StanfordBunny();
 
-        TetrahedronData softBodyMesh = new StanfordBunny();
 
         for (int i = 0; i < numberOfBodies; i++)
         {
-            GameObject bunnyGO = Instantiate(softBodyMeshPrefabGO);
+            GameObject meshI = Instantiate(softBodyMeshPrefabGO);
 
-            MeshFilter meshFilter = bunnyGO.GetComponent<MeshFilter>();
+            MeshFilter meshFilter = meshI.GetComponent<MeshFilter>();
 
 
             //Random pos
@@ -49,23 +51,24 @@ public class SoftBodyController : MonoBehaviour
             float randomX = Random.Range(-halfPlayground, halfPlayground);
             float randomZ = Random.Range(-halfPlayground, halfPlayground);
 
-            Vector3 startPos = new Vector3(randomX, 10f, randomZ);
+            Vector3 startPos = new Vector3(0, 10f, 0);
 
 
             //Random scale
-            float bunnyScale = Random.Range(2f, 5f);
+            //float meshScale = Random.Range(2f, 5f);
+            float meshScale = 1f;
 
 
             //Random color
-            MeshRenderer mr = bunnyGO.GetComponent<MeshRenderer>();
+            MeshRenderer mr = meshI.GetComponent<MeshRenderer>();
 
             Material mat = mr.material;
 
             mat.color = colors[Random.Range(0, colors.Length)];
             
 
-            //SoftBodySimulationTutorial softBodySim = new SoftBodySimulationTutorial(meshFilter, softBodyMesh, startPos, bunnyScale);
-            SoftBodySimulationVectors softBodySim = new SoftBodySimulationVectors(meshFilter, softBodyMesh, startPos, bunnyScale);
+            //SoftBodySimulationTutorial softBodySim = new SoftBodySimulationTutorial(meshFilter, softBodyMesh, startPos, meshScale);
+            SoftBodySimulationVectors softBodySim = new SoftBodySimulationVectors(meshFilter, softBodyMesh, startPos, meshScale);
 
 
             allSoftBodies.Add(softBodySim);
