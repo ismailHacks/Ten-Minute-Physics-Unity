@@ -13,9 +13,9 @@ public abstract class TetrahedronData
     };
 
     public static Vector3Int[] volIdOrder2 = new Vector3Int[] {
-        new Vector3Int( 1, 3, 2),
-        new Vector3Int( 0, 2, 3),
-        new Vector3Int( 0, 3, 1),
+        new Vector3Int(1, 3, 2),
+        new Vector3Int(0, 2, 3),
+        new Vector3Int(0, 3, 1),
         new Vector3Int(0, 1, 2)
     };
 

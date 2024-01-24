@@ -378,7 +378,7 @@ public class SoftBodySimulationVectors : IGrabbable
 		for (int i = 0; i < numEdges; i++)
 		{
 			//2 vertices per edge in the data structure, so multiply by 2 to get the correct vertex index
-			int id0 = tetEdgeIds[2 * i    ];
+			int id0 = tetEdgeIds[2 * i + 0];
 			int id1 = tetEdgeIds[2 * i + 1];
 
 			float w0 = invMass[id0];

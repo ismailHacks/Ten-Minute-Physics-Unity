@@ -34,7 +34,8 @@ public class SoftBodyController : MonoBehaviour
     {
         Random.InitState(SEED);
         
-        TetrahedronData softBodyMesh = new tetTest();
+        //TetrahedronData softBodyMesh = new tetTest();
+        TetrahedronData softBodyMesh = new tetTest3();
         //TetrahedronData softBodyMesh = new StanfordBunny();
 
 
@@ -51,7 +52,7 @@ public class SoftBodyController : MonoBehaviour
             float randomX = Random.Range(-halfPlayground, halfPlayground);
             float randomZ = Random.Range(-halfPlayground, halfPlayground);
 
-            Vector3 startPos = new Vector3(0, 10f, 0);
+            Vector3 startPos = new Vector3(0f, 0f, 0f);
 
 
             //Random scale
