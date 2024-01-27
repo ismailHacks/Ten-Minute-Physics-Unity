@@ -51,7 +51,7 @@ public class SoftBodySimulationVectors : IGrabbable
 	private readonly float volCompliance = 0.0f;
 
 	//Environment collision data 
-	private readonly float floorHeight = 0f;
+	private readonly float floorHeight = -0.01f;
 	private Vector3 halfPlayGroundSize = new Vector3(5f, 8f, 5f); 
 
 
