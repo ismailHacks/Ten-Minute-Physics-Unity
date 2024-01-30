@@ -46,7 +46,7 @@ public class SoftBodySimulationVectors : IGrabbable
 	//Soft body behavior settings
 	//Compliance (alpha) is the inverse of physical stiffness (k)
 	//alpha = 0 means infinitely stiff (hard)
-	private readonly float edgeCompliance = 2f;
+	private readonly float edgeCompliance = 0.1f;
 	//Should be 0 or the mesh becomes very flat even for small values 
 	private readonly float volCompliance = 0.0f;
 
@@ -80,7 +80,7 @@ public class SoftBodySimulationVectors : IGrabbable
 		numTets = tetraData.GetNumberOfTetrahedrons;
 		numEdges = tetraData.GetNumberOfEdges;
 
-		Debug.Log(numParticles + "-" + numTets+ "-" + numEdges);
+		//Debug.Log(numParticles + "-" + numTets+ "-" + numEdges);
 
 		//Init the arrays 
 		//Has to be done in the constructor because readonly
@@ -510,7 +510,7 @@ public class SoftBodySimulationVectors : IGrabbable
 	private void InitMesh(MeshFilter meshFilter, TetrahedronData tetraData)
 	{
 		Mesh mesh = new();
-		Debug.Log(pos[0]);
+		//Debug.Log(pos[0]);
 		mesh.vertices = pos;
 		mesh.triangles = tetraData.GetTetSurfaceTriIds;
 

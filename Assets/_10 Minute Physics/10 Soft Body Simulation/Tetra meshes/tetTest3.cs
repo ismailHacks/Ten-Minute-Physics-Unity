@@ -17,9 +17,9 @@ public class tetTest3 : TetrahedronData
 	public override int[] GetTetSurfaceTriIds => tetSurfaceTriIdsCylinder;
 
 	public float cylinderOuterRadius = 1f;
-	public float cylinderInnerRadius = 0.4f;
+	public float cylinderInnerRadius = 0.5f;
 
-	private static int rotationNo = 9;
+	private static int rotationNo = 7;
 	private float[] vertsCylinder = new float[12*rotationNo];
 	private int[] tetIdsCylinder = new int[4*rotationNo];
 	private int[] tetEdgeIdsCylinder = new int[12*rotationNo];
