@@ -163,8 +163,6 @@ public class SoftBodySimulationVectors : IGrabbable
 		}
 	}
 
-
-
 	public void MyFixedUpdate()
 	{
 		if (!simulate)
@@ -178,8 +176,6 @@ public class SoftBodySimulationVectors : IGrabbable
 
 		Simulate(dt);
 	}
-
-
 
 	public void MyUpdate()
 	{
@@ -206,13 +202,10 @@ public class SoftBodySimulationVectors : IGrabbable
 		}
 	}
 
-
-
 	public Mesh MyOnDestroy()
 	{
 		return softBodyMesh;
 	}
-
 
 
 	//
@@ -235,8 +228,6 @@ public class SoftBodySimulationVectors : IGrabbable
 			PostSolve(sdt);
 		}
 	}
-
-
 
 	//Move the particles and handle environment collision
 	void PreSolve(float dt, Vector3 gravity)
@@ -261,8 +252,6 @@ public class SoftBodySimulationVectors : IGrabbable
 		}
 	}
 
-
-
 	private void HandleEnvironmentCollision()
 	{
 		for (int i = 0; i < numParticles; i++)
@@ -270,8 +259,6 @@ public class SoftBodySimulationVectors : IGrabbable
 			EnvironmentCollision(i);
 		}
 	}
-
-
 
 	//Collision with invisible walls and floor
 	private void EnvironmentCollision(int i)
@@ -320,8 +307,6 @@ public class SoftBodySimulationVectors : IGrabbable
 		}
 	}
 
-
-
 	//Handle the soft body physics
 	private void SolveConstraints(float dt)
 	{
@@ -338,8 +323,6 @@ public class SoftBodySimulationVectors : IGrabbable
 		SolveEdges(edgeCompliance, dt);
 		SolveVolumes(volCompliance, dt);
 	}
-
-
 
 	//Fix velocity
 	private void PostSolve(float dt)
@@ -358,8 +341,6 @@ public class SoftBodySimulationVectors : IGrabbable
 			vel[i] = (pos[i] - prevPos[i]) * oneOverdt;
 		}
 	}
-
-
 
 	//Solve distance constraint
 	//2 particles:
@@ -422,7 +403,6 @@ public class SoftBodySimulationVectors : IGrabbable
 			pos[id1] += -lambda * w1 * gradC;
 		}
 	}
-
 
 	//TODO: This method is the bottleneck
 	//Solve volume constraint
@@ -501,7 +481,6 @@ public class SoftBodySimulationVectors : IGrabbable
 	}
 
 
-
 	//
 	// Unity mesh 
 	//
@@ -523,8 +502,6 @@ public class SoftBodySimulationVectors : IGrabbable
 		softBodyMesh.MarkDynamic();
 	}
 
-
-
 	//Update the mesh with new vertex positions
 	private void UpdateMesh()
 	{
@@ -533,7 +510,6 @@ public class SoftBodySimulationVectors : IGrabbable
 		softBodyMesh.RecalculateBounds();
 		softBodyMesh.RecalculateNormals();
 	}
-
 
 
 	//
@@ -549,8 +525,6 @@ public class SoftBodySimulationVectors : IGrabbable
 			prevPos[i] += moveDist;
 		}
 	}
-
-
 
 	//Calculate the volume of a tetrahedron
 	private float GetTetVolume(int nr)
@@ -592,15 +566,11 @@ public class SoftBodySimulationVectors : IGrabbable
 		halfPlayGroundSize.z = Mathf.Clamp(halfPlayGroundSize.z, minWallSize, 100f);
 	}
 
-
-
 	//Yeet the mesh upwards
 	private void Yeet()
 	{
 		Translate(new Vector3(0f, 0.2f, 0f));
 	}
-
-
 
 	//Squash the mesh so it becomes flat against the ground
 	void Squeeze()
@@ -613,8 +583,6 @@ public class SoftBodySimulationVectors : IGrabbable
 
 		UpdateMesh();
 	}
-
-
 
 	//Input pos is the pos in a triangle we get when doing ray-triangle intersection
 	public void StartGrab(Vector3 triangleIntersectionPos)
@@ -649,8 +617,6 @@ public class SoftBodySimulationVectors : IGrabbable
 		}
 	}
 
-
-
 	public void MoveGrabbed(Vector3 newPos)
 	{
 		if (grabId >= 0)
@@ -658,8 +624,6 @@ public class SoftBodySimulationVectors : IGrabbable
 			pos[grabId] = newPos;
 		}
 	}
-
-
 
 	public void EndGrab(Vector3 newPos, Vector3 newParticleVel)
 	{
@@ -674,8 +638,6 @@ public class SoftBodySimulationVectors : IGrabbable
 		grabId = -1;
 	}
 
-
-
 	public void IsRayHittingBody(Ray ray, out CustomHit hit)
 	{
 		//Mesh data
@@ -686,8 +648,6 @@ public class SoftBodySimulationVectors : IGrabbable
 		//Find if the ray hit a triangle in the mesh
 		Intersections.IsRayHittingMesh(ray, vertices, triangles, out hit);
 	}
-
-
 
 	public Vector3 GetGrabbedPos()
 	{

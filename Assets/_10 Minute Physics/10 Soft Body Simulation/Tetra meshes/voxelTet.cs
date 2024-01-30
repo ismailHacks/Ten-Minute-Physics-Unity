@@ -8,24 +8,17 @@ using UnityEngine;
 
 public class voxelTet : TetrahedronData
 {
-	//Getters
-	//public override float[] GetVerts => verts;
-	//public override int[] GetTetIds => tetIds;
-	//public override int[] GetTetEdgeIds => tetEdgeIds;
-	//public override int[] GetTetSurfaceTriIds => tetSurfaceTriIds;
-
-	private static int noVoxels = 10;
-	private static float voxelScale = 0.2f;
+	private static int noVoxels = 2800;
+	private static float voxelScale = 0.1f;
 	private int globalVoxelCount = 0;
 	private int connectionCount = 0;
-	private int repeatCount = 0;
-
 
 	private float[] vertsVoxelMesh = new float[24*noVoxels];
 	private int[] tetIdsVoxelMesh = new int[20*noVoxels];
 	private int[] tetEdgeIdsVoxelMesh = new int[36*noVoxels];
 	private int[] tetSurfaceTriIdsVoxelMesh = new int[48*noVoxels];
 
+	//Getters
 	public override float[] GetVerts => vertsVoxelMesh;
 	public override int[] GetTetIds => tetIdsVoxelMesh;
 	public override int[] GetTetEdgeIds => tetEdgeIdsVoxelMesh;
@@ -33,14 +26,67 @@ public class voxelTet : TetrahedronData
 
 	public voxelTet()
 	{
-		makeVoxel(0,0,0);
-		makeVoxel(1,0,0);
-		makeVoxel(2,0,0);
-		makeVoxel(3,0,0);
-		makeVoxel(0,1,0);
-		makeVoxel(1,1,0);
-		makeVoxel(1,2,0);
-		combineVoxels();
+		makeActuator(0,0,0,10,2,3,10);
+		combineAndOptimizeVoxels();
+	}
+
+	private void makeCylinder(int posX, int posY, int posZ, float radius, float height)
+	{
+		for (int k = 0; k < height; k++)
+		{
+			for (int i = (int)-radius; i < radius; i++)
+			{
+				for (int j = (int)-radius; j < radius; j++)
+				{
+					if(Mathf.Sqrt(i*i+j*j)<radius)
+					{
+						makeVoxel(i+posX,k+posY,j+posZ);
+					}
+				}
+			}	
+		}
+	}
+
+	private void makeTube(int posX, int posY, int posZ, float outerRadius, float innerRadius, float height)
+	{
+		for (int k = 0; k < height; k++)
+		{
+			for (int i = (int)-outerRadius; i < outerRadius; i++)
+			{
+				for (int j = (int)-outerRadius; j < outerRadius; j++)
+				{
+					if(Mathf.Sqrt(i*i+j*j)<outerRadius && Mathf.Sqrt(i*i+j*j)>innerRadius)
+					{
+						makeVoxel(i+posX,k+posY,j+posZ);
+					}
+				}
+			}	
+		}
+	}
+
+	private void makeGyroid(int posX, int posY, int posZ, float width, float sensitivity)
+	{
+		for (int i = 0; i < (int)width; i++)
+		{
+			for (int j = (int)-0; j < width; j++)
+			{
+				for (int k = (int)-width/2; k < width/2; k++)
+				{
+					float gyroid = Mathf.Sin(i)*Mathf.Cos(j) + Mathf.Sin(j)*Mathf.Cos(k) + Mathf.Sin(k)*Mathf.Cos(i);
+					if(gyroid < sensitivity && gyroid > -sensitivity)
+					{
+						makeVoxel(i+posX,j+posY,k+posZ);
+					}
+				}
+			}	
+		}
+	}
+
+	private void makeActuator(int posX, int posY, int posZ, float width, float wallThickness, float capHeight, float totalHeight)
+	{
+		makeCylinder(posX,posY,posZ,width,capHeight);
+		makeTube(posX,(int)capHeight,posZ,width,width-wallThickness,totalHeight-2*capHeight);
+		makeCylinder(posX,(int)capHeight+(int)(totalHeight-2*capHeight),posZ,width,capHeight);
 	}
 
 	private void makeVoxel(int posX, int posY, int posZ)
@@ -69,50 +115,61 @@ public class voxelTet : TetrahedronData
 		globalVoxelCount++;
 	}
 
-	private void combineVoxels()
+	private void combineAndOptimizeVoxels()
 	{
-		for (int i = 0; i < vertsVoxelMesh.Length/3; i++)
+		HashSet<int> processedIndices = new HashSet<int>();
+
+		for (int i = 0; i < vertsVoxelMesh.Length / 3; i++)
 		{
-			for (int j = 0; j < vertsVoxelMesh.Length/3; j++)
+			if (processedIndices.Contains(i))
 			{
-				if(vertsVoxelMesh[3*i]==vertsVoxelMesh[3*j] && vertsVoxelMesh[3*i+1]==vertsVoxelMesh[3*j+1] && vertsVoxelMesh[3*i+2]==vertsVoxelMesh[3*j+2] && i!=j)
+				continue; // Skip already processed indices
+			}
+
+			Vector3 iPosition = new Vector3(vertsVoxelMesh[3 * i], vertsVoxelMesh[3 * i + 1], vertsVoxelMesh[3 * i + 2]);
+
+			for (int j = i + 1; j < vertsVoxelMesh.Length / 3; j++)
+			{
+				Vector3 jPosition = new Vector3(vertsVoxelMesh[3 * j], vertsVoxelMesh[3 * j + 1], vertsVoxelMesh[3 * j + 2]);
+
+				if (iPosition == jPosition)
 				{
-					connectionCount++;
-					int iPos = 3*i;
-					int jPos = 3*j;
+					processedIndices.Add(j);
+
+					int iPos = 3 * i;
+					int jPos = 3 * j;
 
 					for (int k = 0; k < tetEdgeIdsVoxelMesh.Length; k++)
 					{
-						if (tetEdgeIdsVoxelMesh[k] == jPos/3)
+						if (tetEdgeIdsVoxelMesh[k] == jPos / 3)
 						{
-							tetEdgeIdsVoxelMesh[k] = iPos/3;
+							tetEdgeIdsVoxelMesh[k] = iPos / 3;
 						}
 					}
 
 					for (int l = 0; l < tetIdsVoxelMesh.Length; l++)
 					{
-						if (tetIdsVoxelMesh[l] == jPos/3)
+						if (tetIdsVoxelMesh[l] == jPos / 3)
 						{
-							tetIdsVoxelMesh[l] = iPos/3;
+							tetIdsVoxelMesh[l] = iPos / 3;
 						}
 					}
 
 					for (int m = 0; m < tetSurfaceTriIdsVoxelMesh.Length; m++)
 					{
-						if (tetSurfaceTriIdsVoxelMesh[m] == jPos/3)
+						if (tetSurfaceTriIdsVoxelMesh[m] == jPos / 3)
 						{
-							tetSurfaceTriIdsVoxelMesh[m] = iPos/3;
+							tetSurfaceTriIdsVoxelMesh[m] = iPos / 3;
 						}
 					}
-					repeatCount++;
 				}
 			}
 		}
-		Debug.Log("CC = " + connectionCount);
 	}
 
-	//Vertices (x, y, z) for a tetrahedral cube
-	//Provides the vertices of each particle in the mesh
+
+	//Vertices (x, y, z) for a tetrahedral voxel
+	//Provides the vertices of each particle in the voxel
 	private float[] verts =
 	{
 		0,0,1,
@@ -126,7 +183,7 @@ public class voxelTet : TetrahedronData
 		0,1,1
 	};
 
-	//Provides the ID position of the vertices that make up the tetrahedral cube
+	//Provides the ID position of the vertices that make up the tetrahedral voxel
 	private int[] tetIds =
 	{
 		0,1,2,3,
@@ -136,7 +193,7 @@ public class voxelTet : TetrahedronData
 		0,1,3,7
 	};
 
-	//Provides the connections between each one of the edges in the tetrahedral cube
+	//Provides the connections between each one of the edges in the tetrahedral voxel
 	//unlike tetIds the edges should not be repeated with connecting tetrahedrals as they will be looped over.
 	private int[] tetEdgeIds =
 	{
@@ -160,5 +217,43 @@ public class voxelTet : TetrahedronData
 
 	};
 
+	private void combineVoxels() //Legacy code that has been superseeded by combineAndOptimiseVoxels()
+	{
+		for (int i = 0; i < vertsVoxelMesh.Length/3; i++)
+		{
+			for (int j = 0; j < vertsVoxelMesh.Length/3; j++)
+			{
+				if(vertsVoxelMesh[3*i]==vertsVoxelMesh[3*j] && vertsVoxelMesh[3*i+1]==vertsVoxelMesh[3*j+1] && vertsVoxelMesh[3*i+2]==vertsVoxelMesh[3*j+2] && i!=j)
+				{
+					connectionCount++;
+					int iPos = 3*i;
+					int jPos = 3*j;
+					
+					for (int k = 0; k < tetEdgeIdsVoxelMesh.Length; k++)
+					{
+						if (tetEdgeIdsVoxelMesh[k] == jPos/3)
+						{
+							tetEdgeIdsVoxelMesh[k] = iPos/3;
+						}
+					}
 
+					for (int l = 0; l < tetIdsVoxelMesh.Length; l++)
+					{
+						if (tetIdsVoxelMesh[l] == jPos/3)
+						{
+							tetIdsVoxelMesh[l] = iPos/3;
+						}
+					}
+
+					for (int m = 0; m < tetSurfaceTriIdsVoxelMesh.Length; m++)
+					{
+						if (tetSurfaceTriIdsVoxelMesh[m] == jPos/3)
+						{
+							tetSurfaceTriIdsVoxelMesh[m] = iPos/3;
+						}
+					}
+				}
+			}
+		}
+	}
 }
